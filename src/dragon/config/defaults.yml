@@ -25,6 +25,7 @@ Defaults:
   idflag: ''
   entflag: '-S'
   entfile: ''
+  stripflags: '-x'
   resource_dir: 'Resources'
   fw_dirs:
     - $dragon_root_dir/sdks/iPhoneOS.sdk/System/Library/PrivateFrameworks/

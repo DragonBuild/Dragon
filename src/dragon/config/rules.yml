@@ -59,7 +59,7 @@ copy:
   cmd: "cp $in $out"
 lipo:
   name: "Lipo Utility"
-  desc: "Merging architechtures"
+  desc: "Merging architectures"
   cmd: "$lipo -create $in -output $out"
 bundle:
   name: "Bundle Resources"
@@ -68,7 +68,7 @@ bundle:
 debug:
   name: "DsymUtil"
   desc: "Generating Debug Symbols for $name"
-  cmd: "cp $in $out"
+  cmd: "$dsym $in"
 sign:
   name: "$codesign"
   desc: "Signing $name"
@@ -77,3 +77,7 @@ stage:
   name: "Staging Commands"
   desc: "Running Stage for $name"
   cmd: "$stage && $stage2"
+strip:
+  name: "Strip"
+  desc: "Stripping $name"
+  cmd: "$strip $stripflags $in"

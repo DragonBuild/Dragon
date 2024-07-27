@@ -12,6 +12,7 @@ class Toolchain:
         self.plutil = "plutil"
         self.lipo = "lipo"
         self.tapi = "tapi"
+        self.strip = "strip"
 
     @classmethod
     def locate_macos_toolchain(cls, use_objcs: bool):
@@ -67,6 +68,7 @@ class Toolchain:
         tc.dsym = tc_dir + 'dsymutil'
         tc.lipo = tc_dir + 'lipo'
         tc.tapi = tc_dir + 'tapi'
+        tc.strip = tc_dir + 'strip'
 
         return tc
 

@@ -227,6 +227,8 @@ class Generator(object):
             project_dict['ld'] = toolchain.ld
         if 'codesign' not in project_dict:
             project_dict['codesign'] = toolchain.codesign
+        if 'strip' not in project_dict:
+            project_dict['strip'] = toolchain.strip
 
         # TODO: lazy hack
         if 'cxxflags' in project_dict:
@@ -282,7 +284,11 @@ class Generator(object):
 
         build_state = []
         rule_list = []
-        used_rules = {'debug', 'sign', 'stage', 'lipo'}
+        used_rules = {'sign', 'stage', 'lipo'}
+        if _RELEASE_BUILD:
+            used_rules.add('strip')
+        else:
+            used_rules.add('debug')
         subdir: str = self.project_variables['dir'] + '/'
         filedict = classify({key: self.project_variables[key] for key in FILE_RULES})
         linker_conds = set()
@@ -357,10 +363,15 @@ class Generator(object):
             Build('$internalsymtarget',
                   'lipo' if len(self.project_variables['archs']) > 1 else 'copy',
                   [f'$builddir/$name.{a}' for a in self.project_variables['archs']]),
+            # expecting a .unsigned
+            Build('$internalsigntarget', 'copy', '$internalsymtarget'),
             # Debug symbols
-            Build('$internalsigntarget', 'debug', '$internalsymtarget'),
+            # debug & strip run on a file as-is -- Ninja will skip that sort of build rule
+            # as there's nothing to track. we use a 'phonytarget' to tie the debug/strip step
+            # to the sign step, which is always run, via an implicit, secondary dependency (| dep)
+            Build('phonytarget', 'strip' if _RELEASE_BUILD else 'debug', '$internalsigntarget'),
             # Codesign
-            Build('$build_target_file', 'dummy' if self.project_variables['type'] == 'static' else 'sign', '$internalsigntarget'),
+            Build('$build_target_file', 'dummy' if self.project_variables['type'] == 'static' else 'sign', '$internalsigntarget|phonytarget'),
             # Stage commands (these are actually ran at a different point in the 'runner')
             Build('stage', 'stage', 'build.ninja'),
         ])
@@ -368,7 +379,8 @@ class Generator(object):
         # Fix used_rules, TODO: maybe this could be optimized elsewhere?
         if len(self.project_variables['archs']) <= 1:
             used_rules.remove("lipo")
-            used_rules.add("copy")
+
+        used_rules.add("copy")
 
         if self.project_variables['type'] == 'static':
             # use a dummy rule to rename it to what the next rule expects
@@ -428,6 +440,7 @@ class Generator(object):
             Var('logos'),
             Var('optool'),
             Var('swift'),
+            Var('strip'),
             ___,
             Var('targetvers'),
             Var('targetos'),
@@ -443,6 +456,7 @@ class Generator(object):
             Var('debug'),
             Var('entfile'),
             Var('entflag'),
+            Var('stripflags'),
             Var('optim'),
             Var('warnings'),
             ___,
