@@ -25,7 +25,7 @@ Types:
     variables:
       install_location: '/Library/MobileSubstrate/DynamicLibraries'
       build_target_file: '$dragon_data_dir/$stagedir$location/$name.dylib'
-      lopts: '-dynamiclib -ggdb -framework CydiaSubstrate'
+      lopts: '-dynamiclib -ggdb'
       ldflags: '-install_name @rpath/$name.dylib'
       frameworks:
         - UIKit

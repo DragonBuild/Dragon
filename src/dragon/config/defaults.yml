@@ -57,5 +57,5 @@ InternalDefaults:
 # Applied on top of both of these.
 Rootless:
   rootless_prefix: '/var/jb'
-  rpathflags: '-rpath $rootless_prefix/Library/Frameworks -rpath $rootless_prefix/usr/lib'
+  rpathflags: '-rpath $rootless_prefix/Library/Frameworks -rpath $rootless_prefix/usr/lib -rpath @loader_path/.jbroot/Library/Frameworks -rpath @loader_path/.jbroot/usr/lib'
   internalldflags: '$internalcflags $typeldflags $frameworks $libs $libflags $lopts $libSearch $ldflags $rpathflags'
