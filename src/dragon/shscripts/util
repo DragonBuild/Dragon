@@ -15,7 +15,9 @@ drexit()
     # This function resets terminal colors, fixes stty (just in case), and then exits with arg0's value
     # It should be called on *EVERY* exit, no matter what.
     echo -e "${NC}"
-    stty sane
+    if [[ -t 0 ]]; then
+        stty sane
+    fi
     python3 -m dragon.update_check
     exit $1
 }

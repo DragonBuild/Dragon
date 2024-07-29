@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 clean_dir()
 {
     DNAME=$1

@@ -215,7 +215,7 @@ if [[ $build -eq 1 ]]; then
             cp DragonMake "$i/$DRAGON_DIR/DragonMake" 2> /dev/null
         fi
         build $i $j
-    done
+    done || exit
 
     find . -name '.clean' -type f -delete
 
